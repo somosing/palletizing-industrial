@@ -1,0 +1,101 @@
+simulation:
+  physics_hz: 120
+  render_hz: 30
+  max_seconds: 600.0
+  seed: 7
+  headless: true
+  keep_open: true
+  streaming: webrtc
+  ros2_bridge: false
+robot:
+  asset_relative_path: Isaac/Robots/UR10/ur10.usd
+  prim_path: /World/UR10
+  wrist_name: wrist_3_link
+  scan_position:
+  - 0.6
+  - -0.35
+  - 0.98
+  scan_orientation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  travel_z: 1.08
+  tool_length: 0.18
+  max_joint_speed:
+  - 0.65
+  - 0.65
+  - 0.65
+  - 0.65
+  - 0.65
+  - 0.65
+  max_joint_acceleration: 1.5
+  max_linear_speed: 0.16
+  max_angular_speed: 0.55
+  kp: 40000.0
+  kd: 2000.0
+  position_tolerance: 0.003
+  orientation_tolerance: 0.018
+  waypoint_timeout: 35.0
+camera:
+  resolution:
+  - 640
+  - 480
+  fps: 30
+  local_translation:
+  - 0.1
+  - 0.0
+  - 0.035
+  local_orientation_ros:
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  focal_length: 14.0
+  horizontal_aperture: 24.0
+  clipping_range:
+  - 0.02
+  - 5.0
+  min_points: 400
+  dimension_tolerance: 0.018
+  stable_frames: 3
+  detection_timeout: 10.0
+box:
+  dimensions:
+  - 0.3
+  - 0.3
+  - 0.3
+  mass: 1.0
+  spawn_jitter_xy: 0.025
+  spawn_yaw_range:
+  - -0.4
+  - 0.4
+table:
+  center_xy:
+  - 0.6
+  - -0.35
+  dimensions:
+  - 0.7
+  - 0.6
+  - 0.2
+pallet:
+  center_xy:
+  - -0.05
+  - 0.67
+  dimensions:
+  - 1.2
+  - 0.8
+  - 0.12
+  rows: 2
+  columns: 2
+  spacing_xy:
+  - 0.36
+  - 0.36
+process:
+  approach_clearance: 0.14
+  release_gap: 0.005
+  grip_dwell: 0.2
+  release_dwell: 1.5
+  placement_tolerance: 0.025
+  break_force: 800.0
+  break_torque: 150.0

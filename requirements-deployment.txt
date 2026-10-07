@@ -1,0 +1,5 @@
+-r requirements-dl.txt
+onnx>=1.17,<2
+onnxruntime>=1.20,<2
+# For CUDA execution use a compatible onnxruntime-gpu package instead of onnxruntime.
+# TensorRT engine export needs TensorRT on the target NVIDIA machine.

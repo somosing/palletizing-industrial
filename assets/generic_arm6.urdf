@@ -1,0 +1,29 @@
+<?xml version="1.0"?><robot name="generic_six_axis_palletizer">
+<link name="base"><inertial><mass value="10"/><inertia ixx="0.03" iyy="0.13333333333333333" izz="0.13333333333333333" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0 0 0.325"/><geometry><box size="0.20 0.20 0.65"/></geometry><material name="base_paint"><color rgba="0.15 0.18 0.22 1"/></material></visual>
+    <collision><origin xyz="0 0 0.325"/><geometry><box size="0.20 0.20 0.65"/></geometry></collision></link>
+<link name="link1"><inertial><mass value="3"/><inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.04 0 0"/><geometry><box size="0.08 0.075 0.075"/></geometry><material name="link1_paint"><color rgba="0.15 0.45 0.7 1"/></material></visual>
+    <collision><origin xyz="0.04 0 0"/><geometry><box size="0.08 0.075 0.075"/></geometry></collision></link>
+<joint name="joint1" type="revolute"><parent link="base"/><child link="link1"/><origin xyz="0 0 .70"/><axis xyz="0 0 1"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="link2"><inertial><mass value="5"/><inertia ixx="0.03" iyy="0.6406666666666666" izz="0.6406666666666666" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.31 0 0"/><geometry><box size="0.62 0.075 0.075"/></geometry><material name="link2_paint"><color rgba="0.15 0.45 0.7 1"/></material></visual>
+    <collision><origin xyz="0.31 0 0"/><geometry><box size="0.62 0.075 0.075"/></geometry></collision></link>
+<joint name="joint2" type="revolute"><parent link="link1"/><child link="link2"/><origin xyz="0 0 0"/><axis xyz="0 1 0"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="link3"><inertial><mass value="4"/><inertia ixx="0.03" iyy="0.4485333333333333" izz="0.4485333333333333" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.29 0 0"/><geometry><box size="0.58 0.075 0.075"/></geometry><material name="link3_paint"><color rgba="0.15 0.45 0.7 1"/></material></visual>
+    <collision><origin xyz="0.29 0 0"/><geometry><box size="0.58 0.075 0.075"/></geometry></collision></link>
+<joint name="joint3" type="revolute"><parent link="link2"/><child link="link3"/><origin xyz=".62 0 0"/><axis xyz="0 1 0"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="link4"><inertial><mass value="0.8"/><inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.0275 0 0"/><geometry><box size="0.055 0.075 0.075"/></geometry><material name="link4_paint"><color rgba="0.95 0.5 0.1 1"/></material></visual>
+    <collision><origin xyz="0.0275 0 0"/><geometry><box size="0.055 0.075 0.075"/></geometry></collision></link>
+<joint name="joint4" type="revolute"><parent link="link3"/><child link="link4"/><origin xyz=".58 0 0"/><axis xyz="1 0 0"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="link5"><inertial><mass value="0.6"/><inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.0225 0 0"/><geometry><box size="0.045 0.075 0.075"/></geometry><material name="link5_paint"><color rgba="0.95 0.5 0.1 1"/></material></visual>
+    <collision><origin xyz="0.0225 0 0"/><geometry><box size="0.045 0.075 0.075"/></geometry></collision></link>
+<joint name="joint5" type="revolute"><parent link="link4"/><child link="link5"/><origin xyz="0 0 0"/><axis xyz="0 1 0"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="link6"><inertial><mass value="0.4"/><inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0" ixz="0" iyz="0"/></inertial>
+    <visual><origin xyz="0.0175 0 0"/><geometry><box size="0.035 0.075 0.075"/></geometry><material name="link6_paint"><color rgba="0.95 0.5 0.1 1"/></material></visual>
+    <collision><origin xyz="0.0175 0 0"/><geometry><box size="0.035 0.075 0.075"/></geometry></collision></link>
+<joint name="joint6" type="revolute"><parent link="link5"/><child link="link6"/><origin xyz="0 0 0"/><axis xyz="0 0 1"/><limit lower="-6.28" upper="6.28" effort="1500" velocity="1.0"/><dynamics damping="0.05"/></joint>
+<link name="vacuum_tool"><inertial><mass value="0.15"/><inertia ixx=".001" iyy=".001" izz=".001" ixy="0" ixz="0" iyz="0"/></inertial><visual><origin xyz="0 0 .09"/><geometry><cylinder radius=".027" length=".18"/></geometry><material name="black"><color rgba=".08 .08 .09 1"/></material></visual><collision><origin xyz="0 0 .09"/><geometry><cylinder radius=".027" length=".18"/></geometry></collision></link><joint name="tool_fixed" type="fixed"><parent link="link6"/><child link="vacuum_tool"/></joint></robot>

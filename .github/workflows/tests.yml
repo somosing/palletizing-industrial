@@ -1,0 +1,49 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  software-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-test.txt
+      - name: Install test dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Compile source
+        run: python -m compileall -q palletizing scripts tests
+      - name: Run software tests
+        run: >-
+          python -m unittest
+          tests.test_benchmark
+          tests.test_conveyor
+          tests.test_core
+          tests.test_industrial
+          tests.test_learning
+          tests.test_stacking
+          tests.test_visual_conveyor
+          -v
+      - name: Run one-carton headless physics smoke test
+        run: |
+          python scripts/run_industrial.py \
+            --headless --renderer tiny --seed 7 --count 1 \
+            --arrival-order random --planner beam-search --buffer-capacity 4 \
+            --output "$RUNNER_TEMP/palletizing-smoke"
+          SMOKE_REPORT="$RUNNER_TEMP/palletizing-smoke/report.json" python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(Path(os.environ["SMOKE_REPORT"]).read_text())
+          assert report["state"] == "DONE", report.get("error")
+          assert report["committed"] == report["requested"] == 1
+          assert len(report["verified_placements"]) == 1
+          print("Headless PyBullet smoke test passed")
+          PY

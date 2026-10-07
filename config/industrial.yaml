@@ -1,0 +1,163 @@
+simulation:
+  physics_hz: 240
+  render_hz: 30
+  max_seconds: 1800
+  seed: 7
+  headless: false
+  keep_open: true
+  streaming: none
+  ros2_bridge: false
+robot:
+  asset_relative_path: assets/ur10e/robot.urdf
+  prim_path: /World/UR10
+  wrist_name: wrist_3_link
+  scan_position:
+  - 0.6
+  - -0.35
+  - 0.98
+  scan_orientation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  travel_z: 1.08
+  max_reach_z: 1.45
+  tool_length: 0.18
+  max_joint_speed:
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  max_joint_acceleration: 0.8
+  max_linear_speed: 0.16
+  max_angular_speed: 0.55
+  kp: 40000.0
+  kd: 2000.0
+  position_tolerance: 0.004
+  orientation_tolerance: 0.025
+  waypoint_timeout: 35.0
+  base_position:
+  - 0
+  - 0
+  - 0.55
+camera:
+  resolution:
+  - 640
+  - 480
+  fps: 30
+  local_translation:
+  - 0.1
+  - 0.0
+  - 0.035
+  local_orientation_ros:
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  focal_length: 14.0
+  horizontal_aperture: 24.0
+  clipping_range:
+  - 0.02
+  - 5.0
+  min_points: 400
+  dimension_tolerance: 0.018
+  stable_frames: 3
+  detection_timeout: 10.0
+box:
+  dimensions:
+  - 0.3
+  - 0.3
+  - 0.3
+  minimum_dimensions:
+  - 0.16
+  - 0.16
+  - 0.12
+  maximum_dimensions:
+  - 0.34
+  - 0.34
+  - 0.32
+  mass: 1.0
+  spawn_jitter_xy: 0.025
+  spawn_yaw_range:
+  - -0.4
+  - 0.4
+table:
+  center_xy:
+  - 0.6
+  - -0.35
+  dimensions:
+  - 0.7
+  - 0.6
+  - 0.2
+conveyor:
+  enabled: true
+  length: 3.4
+  width: 0.52
+  deck_thickness: 0.024
+  center_offset_x: 1.2
+  feed_start_offset_x: 2.62
+  feed_duration_s: 1.2
+  roller_count: 12
+  buffer_capacity: 4
+  buffer_first_slot_offset_x: 0.62
+  buffer_slot_pitch_m: 0.47
+  pick_station_clearance_m: 0.10
+  arrival_interval_s: 2.5
+  arrival_jitter_fraction: 0.25
+  planner: beam-search
+  beam_width: 24
+  search_depth: 4
+  placement_branches: 2
+  shuttle_duration_s: 0.8
+  shuttle_clearance_m: 0.32
+pallet:
+  center_xy:
+  - -0.05
+  - 0.67
+  dimensions:
+  - 1.2
+  - 0.8
+  - 0.12
+  rows: 2
+  columns: 2
+  spacing_xy:
+  - 0.36
+  - 0.36
+process:
+  random_boxes_min: 4
+  random_boxes_max: 8
+  approach_clearance: 0.14
+  release_gap: 0.005
+  grip_dwell: 0.2
+  release_dwell: 1.5
+  placement_tolerance: 0.025
+  break_force: 60.0
+  break_torque: 5.0
+  detection_retries: 2
+  grasp_retries: 2
+  settle_seconds: 1.0
+  max_tool_payload_kg: 3.0
+motion:
+  collision_resolution_rad: 0.035
+  clearance_m: 0.002
+  cartesian_ik_attempts: 12
+  max_carry_tilt_rad: 0.5
+  planning_timeout_s: 6.0
+  rrt_iterations: 2200
+  rrt_step_rad: 0.22
+packing:
+  usable_dimensions:
+  - 0.8
+  - 0.7
+  max_height: 0.85
+  max_layers: 3
+  gap: 0.025
+  support_margin: 0.008
+  max_payload: 60.0
+  min_support_fraction: 0.95
+  max_overhang: 0.02
+sensor:
+  depth_noise_std_m: 0.0008
+  depth_dropout: 0.002

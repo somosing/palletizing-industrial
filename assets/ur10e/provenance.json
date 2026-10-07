@@ -1,0 +1,14 @@
+{
+  "source": "https://github.com/UniversalRobots/Universal_Robots_ROS2_Description",
+  "commit": "6662e15f32c23c12ece57d0050aee9a716e4fc41",
+  "model": "ur10e",
+  "calibration": "upstream nominal, not hardware-specific",
+  "changes": [
+    "flatten xacro",
+    "convert visual DAE to OBJ",
+    "portable mesh paths",
+    "dummy inertials",
+    "0.18m ideal vacuum tool",
+    "wrist camera housing aligned with configured optical origin"
+  ]
+}

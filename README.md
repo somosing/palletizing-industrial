@@ -153,3 +153,13 @@ palletizing/  Perception, robot, packing, and conveyor modules
 scripts/      Simulation, evaluation, training, and benchmark entry points
 tests/        Unit and regression tests
 ```
+
+### Manifest-optimized palletizing
+
+A PyBullet simulation completed 12 of 12 carton placements using a two-layer layout plan.
+
+![Completed palletizing simulation](assets/qualitative/optimized_seed11_cell.png)
+
+The planner used iterated local search. Its plan estimated 54.8% pallet volume utilization, 0.274 m maximum stack height, and a minimum support fraction of 1.00. The run took about 301 seconds.
+
+This is a successful simulation run. Other runs have stopped at grasp because the vacuum seal geometry was invalid.

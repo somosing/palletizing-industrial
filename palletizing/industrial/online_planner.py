@@ -104,6 +104,51 @@ def _prune(nodes: list[_Node], width: int) -> list[_Node]:
     return chosen
 
 
+def reconcile_first_placement(
+    packer: SupportPacker,
+    dimensions,
+    mass: float,
+    capacity: float,
+    planned: Placement | None,
+) -> Placement:
+    """Resolve the beam's first placement against the final pick measurement.
+
+    Online planning uses the infeed dimensioner estimate. The wrist camera
+    measures the selected carton again before placement. Re-run feasibility
+    with that final dimension estimate, then preserve the planned support,
+    layer, pose and yaw as closely as possible. If perception changed enough
+    that the exact planned candidate is no longer valid, return the closest
+    feasible candidate; subsequent picks are replanned from the committed
+    pallet state. This keeps the executed first action aligned with the state
+    that the online beam evaluated whenever the measurement allows it.
+    """
+    candidates = packer.candidates(dimensions, mass, capacity)
+    if not candidates:
+        raise PalletFull(
+            "Final carton measurement has no support-, stability-, and load-compliant placement"
+        )
+    if planned is None:
+        return candidates[0]
+
+    def score(candidate: Placement) -> tuple:
+        center_error = float(np.linalg.norm(
+            np.asarray(candidate.center, dtype=float)
+            - np.asarray(planned.center, dtype=float)
+        ))
+        # Keep the intended quarter-turn when possible. A yaw change can swap
+        # the footprint axes and invalidate the packing decisions in the beam.
+        yaw_error = 0.5 * abs(float(np.angle(np.exp(2j * (candidate.yaw - planned.yaw)))))
+        return (
+            candidate.support != planned.support,
+            candidate.layer != planned.layer,
+            round(center_error, 9),
+            round(yaw_error, 9),
+            -round(candidate.support_fraction, 9),
+        )
+
+    return min(candidates, key=score)
+
+
 def plan_online_pick(
     packer: SupportPacker,
     items: list[dict],

@@ -79,6 +79,43 @@ class PlannerTests(unittest.TestCase):
         self.assertTrue(all(planner.edge(x,y) for x,y in zip(path[:-1],path[1:])))
 
 
+class PlacementReconciliationTests(unittest.TestCase):
+    @staticmethod
+    def make_packer():
+        return SupportPacker([-0.05, 0.67], [0.8, 0.7], 0.12,
+            max_height=0.85, gap=0.025, support_margin=0.008,
+            max_layers=3, max_payload=60, min_support_fraction=0.95,
+            max_overhang=0.02)
+
+    def test_reconciliation_preserves_the_beams_feasible_first_action(self):
+        from palletizing.industrial.online_planner import (
+            plan_online_pick, reconcile_first_placement,
+        )
+        items=[{"dimensions":[.13,.11,.16],"mass":1.0,"capacity":10.0}]
+        packer=self.make_packer()
+        plan=plan_online_pick(packer,items,[0],[0],beam_width=8,
+            search_depth=1,placement_branches=2)
+        planned=plan.placements[0]
+
+        # Replanning against the same final measurement must choose the exact
+        # target used to score the beam state, without mutating the live pallet.
+        chosen=reconcile_first_placement(packer,items[0]["dimensions"],
+            items[0]["mass"],items[0]["capacity"],planned)
+        self.assertEqual(len(packer.placements),0)
+        self.assertEqual(chosen.record(),planned.record())
+
+        packer.commit(chosen)
+        self.assertEqual(len(packer.placements),1)
+        self.assertEqual(packer.placements[0].record(),planned.record())
+
+    def test_reconciliation_without_beam_target_uses_safe_packer_proposal(self):
+        from palletizing.industrial.online_planner import reconcile_first_placement
+        packer=self.make_packer()
+        dimensions=[.13,.11,.16]
+        chosen=reconcile_first_placement(packer,dimensions,1.0,10.0,None)
+        self.assertEqual(chosen.record(),packer.propose(dimensions,1.0,10.0).record())
+
+
 class RemovalPlannerTests(unittest.TestCase):
     def test_removal_order_never_removes_a_support_before_its_children(self):
         from palletizing.industrial.removal import plan_removal_order

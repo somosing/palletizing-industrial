@@ -8,7 +8,7 @@ from ..backends.bullet import Scene as LegacyScene, WristCamera, EyeInHandPercep
 from ..kinematics import DOWN, multiply, yaw_quaternion, rotation
 from .motion import URController, MotionError
 from .packing import SupportPacker, PalletFull
-from .online_planner import plan_online_pick
+from .online_planner import plan_online_pick, reconcile_first_placement
 from .physical_conveyor import FiniteConveyorBuffer, make_arrival_times
 
 LOG=logging.getLogger(__name__)
@@ -407,6 +407,7 @@ class IndustrialCell:
         self.planning_items=[None for _ in inventory]
         self.dimensioner_measurements=[]
         self.online_plans=[]
+        self.online_placement_targets={}
         self.clock=time.perf_counter()
 
     def enter(self,state,**details):
@@ -522,9 +523,13 @@ class IndustrialCell:
                         f'upstream={self.conveyor_buffer.upstream}, '
                         f'committed={len(self.packer.placements)}') from exc
                 selected=int(plan.first_pick)
+                planned_placement=(plan.placements[0] if plan.placements else None)
+                if planned_placement is not None:
+                    self.online_placement_targets[selected]=planned_placement
                 details={'planner':'beam-search','sequence':[int(i) for i in plan.sequence],
                     'completed_depth':plan.completed_depth,'expanded_nodes':plan.expanded_nodes,
-                    'search_score':list(plan.score),'optimality_certified':False}
+                    'search_score':list(plan.score),'optimality_certified':False,
+                    'planned_first_placement':None if planned_placement is None else planned_placement.record()}
             else:
                 feasible=[]
                 for index in visible:
@@ -586,7 +591,17 @@ class IndustrialCell:
             self.enter('PLAN_PLACEMENT')
             if item['mass']>self.c['process']['max_tool_payload_kg']:
                 raise RuntimeError('REJECT_OVERWEIGHT: carton exceeds tool payload metadata limit')
-            placement=self.packer.propose(pose.dimensions,item['mass'],item['capacity'])
+            planned_placement=self.online_placement_targets.pop(index,None)
+            placement=reconcile_first_placement(
+                self.packer,pose.dimensions,item['mass'],item['capacity'],planned_placement)
+            self.record_event('PLACEMENT_RECONCILED',carton_index=int(index),
+                planner_target=None if planned_placement is None else planned_placement.record(),
+                executed_target=placement.record(),
+                target_preserved=bool(planned_placement is not None and
+                    placement.support==planned_placement.support and
+                    placement.layer==planned_placement.layer and
+                    np.allclose(placement.center,planned_placement.center,atol=1e-8) and
+                    abs(placement.yaw-planned_placement.yaw)<1e-8))
             grasp_attempts=int(self.c['process'].get('grasp_retries',2))
             for grasp_attempt in range(grasp_attempts+1):
                 if grasp_attempt:
@@ -599,7 +614,8 @@ class IndustrialCell:
                     self.observations.append({'index':index,'attempt':grasp_attempt,
                         'estimated_center':pose.position.tolist(),'estimated_dimensions':pose.dimensions.tolist(),
                         'center_error_m':float(np.linalg.norm(pose.position-truth))})
-                    placement=self.packer.propose(pose.dimensions,item['mass'],item['capacity'])
+                    placement=reconcile_first_placement(
+                        self.packer,pose.dimensions,item['mass'],item['capacity'],planned_placement)
                 pickq=multiply(yaw_quaternion(pose.yaw),DOWN)
                 grasp=np.r_[pose.position[:2],pose.top_z+tool+.006]
                 self.enter('APPROACH',attempt=grasp_attempt)

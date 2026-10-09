@@ -1,0 +1,47 @@
+{
+  "purpose": "Validate online random-arrival palletizing with conservative dimension margins",
+  "scope": "Simulation results only; not a physical-cell validation or global-optimality claim",
+  "configuration": {
+    "carton_count": 12,
+    "arrival_order": "random",
+    "planner": "beam-search with buffered batch search",
+    "buffer_capacity": 4,
+    "arrival_interval_s": 2.5,
+    "dimension_safety_margin_m": [0.006, 0.006, 0.003],
+    "physics": "PyBullet CPU"
+  },
+  "scenarios": [
+    {
+      "seed": 7,
+      "requested": 12,
+      "committed": 12,
+      "complete": true,
+      "scenario_pass": true,
+      "actual_layers": 2,
+      "actual_stack_height_m": 0.33288359202665896,
+      "packing_utilization": 0.5630735763324304,
+      "max_center_error_m": 0.006557366987216213,
+      "wall_seconds": 334.3124414109989,
+      "buffer_max_occupancy": 4,
+      "buffer_blocked_arrivals": 7,
+      "unique_cartons_selected": 12,
+      "error": ""
+    },
+    {
+      "seed": 22,
+      "requested": 12,
+      "committed": 12,
+      "complete": true,
+      "scenario_pass": true,
+      "actual_layers": 2,
+      "actual_stack_height_m": 0.36016990538168614,
+      "packing_utilization": 0.514345427872233,
+      "max_center_error_m": 0.011753761043920069,
+      "wall_seconds": 228.51208252400102,
+      "buffer_max_occupancy": 4,
+      "buffer_blocked_arrivals": 7,
+      "unique_cartons_selected": 12,
+      "error": ""
+    }
+  ]
+}

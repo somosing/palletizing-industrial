@@ -6,8 +6,9 @@ project combines wrist-camera depth perception, collision-aware robot motion,
 randomized carton arrivals, and post-placement checks.
 
 This is a simulation project, not a validated production cell. The robot model
-is nominal, conveyor motion is simulated, and the current online planner can
-reach a state where the remaining cartons no longer fit. 
+is nominal, conveyor motion is simulated, and carton dimensions come from a
+simulated infeed dimensioner. It should not be used to control physical
+equipment.
 
 ## Example result
 
@@ -17,11 +18,9 @@ shows the verified placement geometry from that run:
 
 ![Verified 12-carton pallet layout](assets/qualitative/seed7_verified_stack.svg)
 
-This example is a nominal cell run; it is not evidence that the randomized
-online conveyor planner completes every stream. In recent 12-carton online
-tests, seeds 11 and 22 stopped at 10/12 even though a full-manifest offline plan
-found a feasible 12-carton arrangement. Improving that online decision policy
-is active work.
+This example is a nominal cell run. Separate randomized conveyor benchmarks
+below exercise online selection with a four-carton buffer. They are simulation
+results for the listed seeds, not a guarantee for every arrival stream.
 
 Regenerate the layout from the saved report with:
 
@@ -38,6 +37,10 @@ python scripts/render_pallet_layout.py \
 - Randomized cartons with different dimensions and masses.
 - Finite conveyor buffer with random arrivals and upstream back-pressure.
 - Online carton selection from cartons that have reached the buffer.
+- Buffer-constrained plan search for fully dimensioned residual batches, with
+  a finite randomized priority budget and a safe online beam-search fallback.
+- Conservative dimension envelopes to absorb measured size differences between
+  the simulated infeed dimensioner and final wrist-camera estimate.
 - Multi-layer pallet placement with geometry and load checks.
 - Collision checks, bounded retry behavior, fault injection, and JSON reports.
 - Optional learned carton segmentation; depth-based perception is the default.
@@ -102,6 +105,41 @@ python scripts/run_industrial.py \
 
 ## Tests and benchmark
 
+### Dimension-robust online benchmark
+
+The buffered planner now adds a conservative dimension envelope to its
+upstream measurements before it lays out the remaining cartons. This helps
+preserve feasible pallet slots when the final wrist-camera measurement differs
+from the infeed dimensioner estimate.
+
+Two additional 12-carton random-arrival runs completed all placements with a
+four-carton buffer:
+
+| Seed | Result | Layers | Stack height | Pallet volume utilization | Max pick center error | Wall time |
+| ---: | :---: | ---: | ---: | ---: | ---: | ---: |
+| 7 | 12/12 | 2 | 0.333 m | 56.3% | 6.6 mm | 334 s |
+| 22 | 12/12 | 2 | 0.360 m | 51.4% | 11.8 mm | 229 s |
+
+Both runs selected each carton once, reached the configured buffer capacity of
+four, and recorded seven blocked arrivals handled by upstream back-pressure.
+The seed 11 GUI retry that exposed the dimension mismatch also completed after
+the margin change. The two benchmark records are saved in
+[`verification/dimension_margin_benchmark.json`](verification/dimension_margin_benchmark.json).
+
+These results validate only this simulator configuration and these seeds. They
+do not establish a global packing optimum, robustness across all carton mixes,
+or readiness for a physical production cell.
+
+Reproduce the two benchmark scenarios with:
+
+```bash
+python scripts/benchmark_industrial.py \
+  --count 12 --seeds 7 22 --arrival-orders random \
+  --planner beam-search --buffer-capacity 4 \
+  --arrival-interval-s 2.5 \
+  --output outputs/dimension_margin_validation
+```
+
 Run the software tests:
 
 ```bash
@@ -153,13 +191,3 @@ palletizing/  Perception, robot, packing, and conveyor modules
 scripts/      Simulation, evaluation, training, and benchmark entry points
 tests/        Unit and regression tests
 ```
-
-### Manifest-optimized palletizing
-
-A PyBullet simulation completed 12 of 12 carton placements using a two-layer layout plan.
-
-![Completed palletizing simulation](assets/qualitative/optimized_seed11_cell.png)
-
-The planner used iterated local search. Its plan estimated 54.8% pallet volume utilization, 0.274 m maximum stack height, and a minimum support fraction of 1.00. The run took about 301 seconds.
-
-This is a successful simulation run. Other runs have stopped at grasp because the vacuum seal geometry was invalid.

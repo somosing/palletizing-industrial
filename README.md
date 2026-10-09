@@ -7,8 +7,7 @@ randomized carton arrivals, and post-placement checks.
 
 This is a simulation project, not a validated production cell. The robot model
 is nominal, conveyor motion is simulated, and the current online planner can
-reach a state where the remaining cartons no longer fit. It should not be used
-to control physical equipment.
+reach a state where the remaining cartons no longer fit. 
 
 ## Example result
 

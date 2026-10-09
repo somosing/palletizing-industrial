@@ -30,6 +30,7 @@ jobs:
           tests.test_learning
           tests.test_stacking
           tests.test_visual_conveyor
+          tests.test_report_visualization
           -v
       - name: Run one-carton headless physics smoke test
         run: |

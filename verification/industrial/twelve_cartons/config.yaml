@@ -1,0 +1,141 @@
+box:
+  dimensions:
+  - 0.3
+  - 0.3
+  - 0.3
+  mass: 1.0
+  maximum_dimensions:
+  - 0.34
+  - 0.34
+  - 0.32
+  minimum_dimensions:
+  - 0.16
+  - 0.16
+  - 0.12
+  spawn_jitter_xy: 0.025
+  spawn_yaw_range:
+  - -0.4
+  - 0.4
+camera:
+  clipping_range:
+  - 0.02
+  - 5.0
+  detection_timeout: 10.0
+  dimension_tolerance: 0.018
+  focal_length: 14.0
+  fps: 30
+  horizontal_aperture: 24.0
+  local_orientation_ros:
+  - 1.0
+  - 0.0
+  - 0.0
+  - 0.0
+  local_translation:
+  - 0.1
+  - 0.0
+  - 0.035
+  min_points: 400
+  resolution:
+  - 640
+  - 480
+  stable_frames: 3
+motion:
+  clearance_m: 0.002
+  collision_resolution_rad: 0.035
+  max_carry_tilt_rad: 0.5
+  planning_timeout_s: 6.0
+  rrt_iterations: 2200
+  rrt_step_rad: 0.22
+packing:
+  gap: 0.025
+  max_height: 0.85
+  max_layers: 3
+  max_overhang: 0.025
+  max_payload: 60.0
+  min_support_fraction: 0.85
+  support_margin: 0.008
+  usable_dimensions:
+  - 0.8
+  - 0.7
+pallet:
+  center_xy:
+  - -0.05
+  - 0.67
+  columns: 2
+  dimensions:
+  - 1.2
+  - 0.8
+  - 0.12
+  rows: 2
+  spacing_xy:
+  - 0.36
+  - 0.36
+process:
+  approach_clearance: 0.14
+  break_force: 60.0
+  break_torque: 5.0
+  detection_retries: 2
+  grasp_retries: 2
+  grip_dwell: 0.2
+  max_tool_payload_kg: 3.0
+  placement_tolerance: 0.025
+  random_boxes_max: 8
+  random_boxes_min: 4
+  release_dwell: 1.5
+  release_gap: 0.005
+  settle_seconds: 1.0
+robot:
+  asset_relative_path: assets/ur10e/robot.urdf
+  base_position:
+  - 0
+  - 0
+  - 0.55
+  kd: 2000.0
+  kp: 40000.0
+  max_angular_speed: 0.55
+  max_joint_acceleration: 0.8
+  max_joint_speed:
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  max_linear_speed: 0.16
+  max_reach_z: 1.45
+  orientation_tolerance: 0.025
+  position_tolerance: 0.004
+  prim_path: /World/UR10
+  scan_orientation:
+  - 0.0
+  - 1.0
+  - 0.0
+  - 0.0
+  scan_position:
+  - 0.6
+  - -0.35
+  - 0.98
+  tool_length: 0.18
+  travel_z: 1.08
+  waypoint_timeout: 35.0
+  wrist_name: wrist_3_link
+sensor:
+  depth_dropout: 0.002
+  depth_noise_std_m: 0.0008
+simulation:
+  headless: false
+  keep_open: true
+  max_seconds: 1800
+  physics_hz: 240
+  render_hz: 30
+  ros2_bridge: false
+  seed: 7
+  streaming: none
+table:
+  center_xy:
+  - 0.6
+  - -0.35
+  dimensions:
+  - 0.7
+  - 0.6
+  - 0.2

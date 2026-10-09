@@ -10,6 +10,29 @@ is nominal, conveyor motion is simulated, and the current online planner can
 reach a state where the remaining cartons no longer fit. It should not be used
 to control physical equipment.
 
+## Example result
+
+The saved seed 7 cell run completed and verified 12 carton placements across
+three layers, with 45.9% reported pallet volume utilization. The figure below
+shows the verified placement geometry from that run:
+
+![Verified 12-carton pallet layout](assets/qualitative/seed7_verified_stack.svg)
+
+This example is a nominal cell run; it is not evidence that the randomized
+online conveyor planner completes every stream. In recent 12-carton online
+tests, seeds 11 and 22 stopped at 10/12 even though a full-manifest offline plan
+found a feasible 12-carton arrangement. Improving that online decision policy
+is active work.
+
+Regenerate the layout from the saved report with:
+
+```bash
+python scripts/render_pallet_layout.py \
+  --report verification/industrial/twelve_cartons/report.json \
+  --config verification/industrial/twelve_cartons/config.yaml \
+  --output assets/qualitative/seed7_verified_stack.svg
+```
+
 ## Features
 
 - UR10e model with a wrist-mounted depth camera and vacuum-style tool.
